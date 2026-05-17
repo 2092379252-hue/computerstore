@@ -3,7 +3,7 @@ target/
 
 # Local uploaded files
 uploads/
-
+src/main/resources/application.yml
 
 # IDE files
 .idea/
