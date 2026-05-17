@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit" />
+    <title>电脑商城</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../bootstrap3/js/holder.js"></script>
+    <link href="../bootstrap3/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <script src="../bootstrap3/jquery-1.9.1.min.js"></script>
+    <script src="../bootstrap3/js/bootstrap.js"></script>
+    <link rel="stylesheet" href="../bootstrap3/font-awesome-4.7.0/css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css" href="../css/layout.css" />
+    <link rel="stylesheet" type="text/css" href="../css/top.css" />
+    <link rel="stylesheet" type="text/css" href="../css/footer.css" />
+    <script type="text/javascript">
+        $(function () {
+            $(".header").load("components/head.html");
+            $(".footer").load("components/footer.html");
+            $(".middleNavigation").load("components/middleNavigationBar.html");
+        });
+    </script>
+</head>
+<body class="status-page">
+    <div class="header"></div>
+    <div class="middleNavigation"></div>
+
+    <main class="container status-main">
+        <section class="status-card">
+            <div class="status-illustration">
+                <img src="../images/index/500_img1.png" alt="500 插图 1" />
+                <img src="../images/index/500_img2.png" alt="500 插图 2" />
+            </div>
+            <div class="status-copy">
+                <span class="status-code">500</span>
+                <h1>服务器正在稍作整理</h1>
+                <p>当前页面遇到了一点异常，可能是服务暂时波动。稍后再试，或者先回首页继续浏览其他内容。</p>
+                <a class="btn status-link" href="index.html">返回首页</a>
+            </div>
+        </section>
+    </main>
+
+    <div class="footer"></div>
+</body>
+</html>

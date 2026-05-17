@@ -1,0 +1,19 @@
+# Maven build output
+target/
+
+# Local uploaded files
+uploads/
+
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+
+# OS / editor noise
+Thumbs.db
+Desktop.ini
+*.log

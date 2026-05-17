@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="renderer" content="webkit" />
+		<title>电脑商城</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="../bootstrap3/js/holder.js"></script>
+		<link href="../bootstrap3/css/bootstrap.css" rel="stylesheet" type="text/css">
+		<script src="../bootstrap3/jquery-1.9.1.min.js"></script>
+		<script src="../bootstrap3/js/bootstrap.js"></script>
+		<link rel="stylesheet" href="../bootstrap3/font-awesome-4.7.0/css/font-awesome.css" />
+		<link rel="stylesheet" type="text/css" href="../css/layout.css" />
+		<link rel="stylesheet" type="text/css" href="../css/login.css" />
+		<script src="../bootstrap3/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/someFunction.js" type="text/javascript" charset="utf-8"></script>
+
+		<script type="text/javascript">
+			function login() {
+				$("#btn-login").click(function () {
+					if ($("#username").val() == "" || $("#password").val() == ""){
+						$("#error-msg").html("请先输入登录信息");
+						return false;
+					}
+					if ($("#code").val() == ""){
+						$("#error-msg").html("验证码不能为空");
+						return false;
+					}
+					$.ajax({
+						url : "/user",
+						type: "get",
+						data: $("#form-login").serialize(),
+						dataType: "json",
+						success: function (res) {
+							if (res.status === 200){
+								alert("登录成功！");
+								window.location.href = "index.html";
+								sessionStorage.setItem("user", JSON.stringify(res.data));
+							}else {
+								$("#error-msg").html(res.message);
+							}
+						},
+						error: function (error) {
+							alert(error.status + "错误,服务器出现故障，请等待攻城狮修复！！");
+						}
+					});
+				});
+			}
+
+			$(function () {
+				login();
+
+				$("#btn-toIndex").click(function () {
+					location.href = "index.html";
+				});
+			});
+		</script>
+	</head>
+	<body class="login-page">
+		<main class="login-shell">
+			<section class="login-stage">
+				<div class="login-story">
+					<a class="login-brand" href="index.html" aria-label="返回电脑商城首页">
+						<img src="../images/index/stumalllogo.png" alt="电脑商城" />
+						<div>
+							<span class="login-brand-kicker">Fresh Picks For Daily Computing</span>
+							<strong>电脑商城</strong>
+						</div>
+					</a>
+
+					<div class="login-story-copy">
+						<span class="login-chip">Desktop Access</span>
+						<h1>欢迎回来，继续轻松挑选你的下一台设备</h1>
+						<p>
+							这是独立的全屏登录页，不再嵌进首页式壳层里。保留原有登录逻辑，
+							但把进入账户系统的第一步做得更安静、更完整，也更像一个正式入口。
+						</p>
+					</div>
+
+					<div class="login-highlights">
+						<div class="login-highlight">
+							<span class="fa fa-leaf"></span>
+							<div>
+								<h2>清爽进入</h2>
+								<p>去掉多余嵌套和页面碎片，让登录动作更聚焦。</p>
+							</div>
+						</div>
+						<div class="login-highlight">
+							<span class="fa fa-shield"></span>
+							<div>
+								<h2>安全校验</h2>
+								<p>保留验证码与原有接口，不改你们现有登录链路。</p>
+							</div>
+						</div>
+						<div class="login-highlight">
+							<span class="fa fa-compass"></span>
+							<div>
+								<h2>轻松返回</h2>
+								<p>登录成功回首页，未登录也可以直接返回继续浏览。</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="login-panel">
+					<div class="login-panel-top">
+						<div>
+							<span class="login-panel-kicker">Account Login</span>
+							<h2>用户登录</h2>
+						</div>
+						<div id="error-msg" class="login-error"></div>
+					</div>
+
+					<form id="form-login" class="login-form" role="form">
+						<div class="login-field">
+							<label for="username">用户名</label>
+							<input id="username" name="username" type="text" class="form-control" placeholder="请输入用户名">
+						</div>
+
+						<div class="login-field">
+							<label for="password">密码</label>
+							<div class="login-password-row">
+								<input id="password" name="password" type="password" class="form-control" placeholder="请输入密码">
+								<button type="button" class="login-eye-btn" onclick="showPasswordOrNot('password','img')" aria-label="切换密码显示状态">
+									<img id="img" src="../images/img/open.jpeg" alt="显示或隐藏密码">
+								</button>
+							</div>
+						</div>
+
+						<div class="login-field">
+							<label for="code">验证码</label>
+							<div class="login-captcha-row">
+								<input id="code" name="code" type="text" class="form-control" placeholder="请输入验证码"/>
+								<img id="loginKaptcha" src="/kaptcha/kaptcha-image" onclick="reFlashImg('loginKaptcha')" alt="点击刷新验证码"/>
+							</div>
+						</div>
+
+						<div class="login-actions">
+							<input id="btn-login" class="btn login-submit-btn" type="button" value="登录" />
+							<input id="btn-toIndex" class="btn login-back-btn" type="button" value="返回主页" />
+						</div>
+
+						<div class="login-bottom-row">
+							<span>还没有账号？</span>
+							<a href="register.html">去注册</a>
+						</div>
+					</form>
+				</div>
+			</section>
+		</main>
+	</body>
+</html>

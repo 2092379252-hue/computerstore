@@ -1,0 +1,96 @@
+<header class="site-header container">
+    <a class="brand-link" href="index.html" aria-label="返回电脑商城首页">
+        <span class="brand-mark">
+            <img src="../images/index/stumalllogo.png" alt="电脑商城" />
+        </span>
+        <span class="brand-copy">
+            <span class="brand-label">Fresh Picks For Daily Computing</span>
+            <strong>电脑商城</strong>
+            <span class="brand-note">清爽选品，轻松下单，给日常数码购物一点松弛感。</span>
+        </span>
+    </a>
+
+    <div class="utility-strip">
+        <a class="utility-pill" href="favorites.html"><span class="fa fa-heart-o"></span><span>收藏清单</span></a>
+        <a class="utility-pill" href="orders.html"><span class="fa fa-file-text-o"></span><span>我的订单</span></a>
+        <a class="utility-pill" href="cart.html"><span class="fa fa-shopping-cart"></span><span>购物车</span></a>
+
+        <div id="accountDropdown" class="account-dropdown btn-group">
+            <button type="button" class="btn btn-link dropdown-toggle account-toggle" data-toggle="dropdown">
+                <span class="fa fa-leaf"></span>
+                <span>账户服务</span>
+                <span id="menuCaret" class="caret"></span>
+            </button>
+            <ul id="uiMenu" class="dropdown-menu account-menu" role="menu">
+                <li><a href="password.html">修改密码</a></li>
+                <li><a href="userdata.html">个人资料</a></li>
+                <li><a href="upload.html">上传头像</a></li>
+                <li><a href="address.html">收货管理</a></li>
+            </ul>
+        </div>
+
+        <div id="authControls" class="auth-controls">
+            <a class="auth-pill" href="login.html" id="loginStatus"><span class="fa fa-user-o"></span><span>登录</span></a>
+            <a class="auth-pill auth-pill-secondary" href="register.html" id="registerEntry">注册</a>
+        </div>
+    </div>
+</header>
+
+<script>
+    $(function () {
+        if (sessionStorage.getItem("user") === null) {
+            $("#loginStatus").html("<span class=\"fa fa-user-o\"></span><span>登录</span>");
+            $("#registerEntry").show();
+            $("#accountDropdown").hide();
+            $("#menuCaret").removeClass("caret");
+            $("#uiMenu").removeClass("dropdown-menu account-menu").empty();
+        } else {
+            $.ajax({
+                url: "/user/queryUser",
+                type: "get",
+                dataType: "json",
+                success: function (res) {
+                    changeMenu(res);
+                }
+            });
+        }
+    });
+
+    function changeMenu(res) {
+        var user = res.data;
+        if (user.username != null) {
+            $("#loginStatus").html("<span class=\"fa fa-user-o\"></span><span>" + user.username + "</span>");
+            document.getElementById("loginStatus").removeAttribute("href");
+            $("#registerEntry").hide();
+            $("#accountDropdown").show();
+
+            if ($("#logoutEntry").length === 0) {
+                $("#authControls").append(
+                    "<a id=\"logoutEntry\" class=\"auth-pill auth-pill-secondary\" href=\"javascript:void(0)\" onclick=\"exitLogin()\"><span class=\"fa fa-sign-out\"></span><span>退出</span></a>"
+                );
+            }
+        }
+    }
+
+    function exitLogin() {
+        if (sessionStorage.getItem("user") == null) {
+            alert("尚未登录，请先登录！");
+        } else {
+            $.ajax({
+                url: "/user/exit",
+                type: "get",
+                dataType: "json",
+                success: function (res) {
+                    if (res.status === 200) {
+                        alert("退出成功!");
+                        sessionStorage.removeItem("user");
+                        location.href = "index.html";
+                    }
+                },
+                error: function () {
+                    alert("服务器出现未知异常，退出登录失败");
+                }
+            });
+        }
+    }
+</script>
