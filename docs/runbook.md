@@ -77,9 +77,10 @@ mysql -u root -p computer_store < database.sql
 
 ## 5. 修改运行配置  （这个我给你们加好.gitignore了，密码改了不会上传）
 
-主配置文件位于：
+需要你们自己创建一个文件位于：
 
 - [application.yml](/D:/computerstore/src/main/resources/application.yml)
+复制application_example.yml然后修改一下。
 
 ### 5.1 数据库配置
 
