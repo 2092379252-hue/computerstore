@@ -1,0 +1,233 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    background: #f3f4f6;
+    font-family: "Microsoft YaHei", sans-serif;
+    /* 新增：全局字体抗锯齿 */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.account-wrapper {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+    /* 新增：响应式间距 */
+    @media (max-width: 768px) {
+        margin: 20px auto;
+    }
+}
+.account-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    padding: 40px;
+    margin-bottom: 30px;
+    /* 新增：卡片悬停动效 */
+    transition: all 0.3s ease;
+    /* 新增：响应式内边距 */
+    @media (max-width: 768px) {
+        padding: 24px 16px;
+    }
+}
+/* 新增：卡片悬停阴影增强 */
+.account-card:hover {
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+}
+.card-title {
+    font-size: 24px;
+    color: #1f2937;
+    margin-bottom: 30px;
+    padding-left: 14px;
+    border-left: 4px solid #2563eb;
+    /* 新增：响应式字体 */
+    @media (max-width: 768px) {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+}
+.form-group {
+    margin-bottom: 24px;
+}
+.form-group label {
+    display: block;
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 8px;
+    /* 新增：标签字体权重 */
+    font-weight: 500;
+}
+.form-group input {
+    width: 100%;
+    height: 46px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 0 16px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+    /* 新增：输入框内边距优化 */
+    line-height: 1;
+}
+.form-group input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+/* 新增：表单验证状态 - 成功 */
+.form-group input.success {
+    border-color: #10b981;
+}
+.form-group input.success:focus {
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+/* 新增：表单验证状态 - 错误 */
+.form-group input.error {
+    border-color: #ef4444;
+}
+.form-group input.error:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+/* 新增：验证提示文本 */
+.form-group .error-tip {
+    font-size: 12px;
+    color: #ef4444;
+    margin-top: 4px;
+    display: none;
+}
+.form-group input.error + .error-tip {
+    display: block;
+}
+.btn-save {
+    height: 46px;
+    padding: 0 28px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    /* 新增：按钮字体权重 */
+    font-weight: 500;
+    /* 新增：禁用状态 */
+    &:disabled {
+        background: #94a3b8;
+        cursor: not-allowed;
+        transform: none;
+    }
+}
+.btn-save:hover {
+    background: #1d4ed8;
+    /* 新增：按钮微缩放 */
+    transform: translateY(-1px);
+}
+/* 新增：按钮点击反馈 */
+.btn-save:active {
+    transform: translateY(0);
+}
+
+/* 地址列表原有样式 + 增强 */
+.address-item {
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* 新增：地址项悬停动效 */
+    transition: all 0.3s ease;
+    /* 新增：响应式布局 */
+    @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+    }
+}
+/* 新增：地址项悬停高亮 */
+.address-item:hover {
+    border-color: #2563eb;
+    background-color: #f8fafc;
+}
+.address-info {
+    line-height: 1.6;
+    /* 新增：地址文本溢出处理 */
+    max-width: calc(100% - 120px);
+    @media (max-width: 768px) {
+        max-width: 100%;
+    }
+}
+/* 新增：地址默认标签 */
+.address-info .default-tag {
+    display: inline-block;
+    font-size: 12px;
+    color: #2563eb;
+    background: rgba(37, 99, 235, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+}
+.address-btns button {
+    margin-left: 8px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    /* 新增：响应式按钮大小 */
+    @media (max-width: 768px) {
+        padding: 4px 10px;
+        font-size: 12px;
+    }
+}
+/* 新增：地址操作按钮区分样式 */
+.address-btns .edit-btn {
+    color: #2563eb;
+    border-color: #2563eb;
+}
+.address-btns .edit-btn:hover {
+    background: #eff6ff;
+}
+.address-btns .delete-btn {
+    color: #ef4444;
+    border-color: #ef4444;
+}
+.address-btns .delete-btn:hover {
+    background: #fef2f2;
+}
+.address-btns .default-btn {
+    color: #10b981;
+    border-color: #10b981;
+}
+.address-btns .default-btn:hover {
+    background: #ecfdf5;
+}
+
+/* 新增：暗黑模式基础支持（可通过body添加dark类启用） */
+body.dark {
+    background: #1e293b;
+}
+body.dark .account-card {
+    background: #334155;
+}
+body.dark .card-title,
+body.dark .form-group label,
+body.dark .address-info {
+    color: #f1f5f9;
+}
+body.dark .form-group input {
+    background: #475569;
+    border-color: #64748b;
+    color: #f1f5f9;
+}
+body.dark .address-item {
+    border-color: #475569;
+    background: #334155;
+}
+body.dark .address-item:hover {
+    background: #475569;
+}

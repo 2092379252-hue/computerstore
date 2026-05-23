@@ -58,18 +58,6 @@ public class AddressController extends BaseController{
         //查询数据
         List<Address> list = addressService.queryUserAddress(uid);
 
-        for (Address address: list) {
-            address.setUid(null);
-            address.setProvinceCode(null);
-            address.setCityCode(null);
-            address.setAreaCode(null);
-            address.setZip(null);
-            address.setTel(null);
-            address.setModifiedTime(null);
-            address.setModifiedUser(null);
-            address.setCreatedTime(null);
-            address.setCreatedUser(null);
-        }
         //返回数据
         return new JsonResult<>(OK,list);
     }
