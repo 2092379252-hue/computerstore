@@ -33,10 +33,8 @@
                 success: function (res) {
                     if (res.status === 200) {
                         $("#username").val(res.data.username || "");
-                        $("#nickname").val(res.data.nickname || "");
                         $("#phone").val(res.data.phone || "");
                         $("#email").val(res.data.email || "");
-                        $("#birthday").val(res.data.birthday || "");
                         // 性别赋值
                         if (res.data.gender === 0) {
                             $("#gender-female").prop("checked", true);
@@ -66,12 +64,6 @@
                 // 数据验证
                 const phone = $("#phone").val().trim();
                 const email = $("#email").val().trim();
-                const nickname = $("#nickname").val().trim();
-
-                if (!nickname) {
-                    $("#error-msg").text("昵称不能为空！");
-                    return false;
-                }
                 if (!phone) {
                     $("#error-msg").text("手机号不能为空！");
                     return false;
@@ -189,12 +181,6 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-2 control-label">昵称：</label>
-                            <div class="col-md-8">
-                                <input id="nickname" name="nickname" type="text" class="form-control" placeholder="请输入昵称（2-10个字符）">
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <label class="col-md-2 control-label">电话号码：</label>
                             <div class="col-md-8">
                                 <input id="phone" name="phone" type="text" class="form-control" placeholder="请输入11位手机号">
@@ -204,12 +190,6 @@
                             <label class="col-md-2 control-label">电子邮箱：</label>
                             <div class="col-md-8">
                                 <input id="email" name="email" type="email" class="form-control" placeholder="请输入电子邮箱">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">生日：</label>
-                            <div class="col-md-8">
-                                <input id="birthday" name="birthday" type="date" class="form-control">
                             </div>
                         </div>
                         <div id="sex" class="form-group">

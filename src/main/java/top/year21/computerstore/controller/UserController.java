@@ -39,42 +39,33 @@ public class UserController extends BaseController{
         return new JsonResult<>(OK);
     }
 
-   //用户登录
-@GetMapping
-public JsonResult<User> userLogin(User user, HttpSession session, String kaptchaCode) {
-    // 1. 从session取出验证码
-    String validCode = (String) session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
+    //用户登录
+    @GetMapping
+    public JsonResult<User> userLogin(User user, HttpSession session, String code, String kaptchaCode){
+        String validCode = (String) session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
+        String inputCode = (kaptchaCode != null && !kaptchaCode.isBlank()) ? kaptchaCode : code;
 
-    // 2. 验证码校验（空值 + 忽略大小写比对）
-    if (validCode == null || !validCode.equalsIgnoreCase(kaptchaCode)) {
-        throw new ValidCodeNotMatchException("验证码错误,请重试！");
+        if (validCode == null || inputCode == null || !validCode.equalsIgnoreCase(inputCode)){
+            throw new ValidCodeNotMatchException("验证码错误,请重试！");
+        }
+
+        session.removeAttribute(Constants.KAPTCHA_SESSION_KEY);
+
+        User loginUser = userService.userLogin(user);
+
+        session.setAttribute("uid",loginUser.getUid());
+        session.setAttribute("username",loginUser.getUsername());
+
+        User newUser = new User();
+        newUser.setUsername(loginUser.getUsername());
+        newUser.setUid(loginUser.getUid());
+        newUser.setGender(loginUser.getGender());
+        newUser.setPhone(loginUser.getPhone());
+        newUser.setEmail(loginUser.getEmail());
+        newUser.setAvatar(loginUser.getAvatar());
+
+        return new JsonResult<>(OK,newUser);
     }
-
-    // 3. 验证完立刻删除session里的验证码（防止重复使用）
-    session.removeAttribute(Constants.KAPTCHA_SESSION_KEY);
-
-    // 4. 执行登录
-    User loginUser = userService.userLogin(user);
-    if (loginUser == null) {
-        // 直接抛出你项目里已有的异常（如果没有，就用下面的注释方式）
-        throw new RuntimeException("用户名或密码错误");
-    }
-
-    // 5. 存入session
-    session.setAttribute("uid", loginUser.getUid());
-    session.setAttribute("username", loginUser.getUsername());
-
-    // 6. 安全返回用户信息
-    User newUser = new User();
-    newUser.setUsername(loginUser.getUsername());
-    newUser.setUid(loginUser.getUid());
-    newUser.setGender(loginUser.getGender());
-    newUser.setPhone(loginUser.getPhone());
-    newUser.setEmail(loginUser.getEmail());
-    newUser.setAvatar(loginUser.getAvatar());
-
-    return new JsonResult<>(OK, newUser);
-}
 
     //用户重置密码
     @PostMapping("/resetPassword")

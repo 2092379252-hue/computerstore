@@ -1,442 +1,153 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="renderer" content="webkit" />
-    <title>电脑商城 - 用户登录</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="../bootstrap3/js/holder.js"></script>
-    <link href="../bootstrap3/css/bootstrap.css" rel="stylesheet" type="text/css">
-    <script src="../bootstrap3/jquery-1.9.1.min.js"></script>
-    <script src="../bootstrap3/js/bootstrap.js"></script>
-    <link rel="stylesheet" href="../bootstrap3/font-awesome-4.7.0/css/font-awesome.css" />
-    <link rel="stylesheet" type="text/css" href="../css/layout.css" />
-    <link rel="stylesheet" type="text/css" href="../css/login.css" />
-    <script src="../bootstrap3/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
-    <script src="../js/someFunction.js" type="text/javascript" charset="utf-8"></script>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="renderer" content="webkit" />
+		<title>电脑商城</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="../bootstrap3/js/holder.js"></script>
+		<link href="../bootstrap3/css/bootstrap.css" rel="stylesheet" type="text/css">
+		<script src="../bootstrap3/jquery-1.9.1.min.js"></script>
+		<script src="../bootstrap3/js/bootstrap.js"></script>
+		<link rel="stylesheet" href="../bootstrap3/font-awesome-4.7.0/css/font-awesome.css" />
+		<link rel="stylesheet" type="text/css" href="../css/layout.css" />
+		<link rel="stylesheet" type="text/css" href="../css/login.css" />
+		<script src="../bootstrap3/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/someFunction.js" type="text/javascript" charset="utf-8"></script>
 
-    <style>
-        /* 全局样式优化 */
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Microsoft YaHei', sans-serif;
-        }
+		<script type="text/javascript">
+			function login() {
+				$("#btn-login").click(function () {
+					if ($("#username").val() == "" || $("#password").val() == ""){
+						$("#error-msg").html("请先输入登录信息");
+						return false;
+					}
+					if ($("#code").val() == ""){
+						$("#error-msg").html("验证码不能为空");
+						return false;
+					}
+					$.ajax({
+						url : "/user",
+						type: "get",
+						data: $("#form-login").serialize(),
+						dataType: "json",
+						success: function (res) {
+							if (res.status === 200){
+								alert("登录成功！");
+								window.location.href = "index.html";
+								sessionStorage.setItem("user", JSON.stringify(res.data));
+							}else {
+								$("#error-msg").html(res.message);
+							}
+						},
+						error: function (error) {
+							alert(error.status + "错误,服务器出现故障，请等待攻城狮修复！！");
+						}
+					});
+				});
+			}
 
-        /* 登录卡片 */
-        .login-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 380px;
-            padding: 30px;
-        }
+			$(function () {
+				login();
 
-        /* 登录头部 */
-        .login-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
+				$("#btn-toIndex").click(function () {
+					location.href = "index.html";
+				});
+			});
+		</script>
+	</head>
+	<body class="login-page">
+		<main class="login-shell">
+			<section class="login-stage">
+				<div class="login-story">
+					<a class="login-brand" href="index.html" aria-label="返回电脑商城首页">
+						<img src="../images/index/stumalllogo.png" alt="电脑商城" />
+						<div>
+							<span class="login-brand-kicker">Fresh Picks For Daily Computing</span>
+							<strong>电脑商城</strong>
+						</div>
+					</a>
 
-        .login-header h2 {
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
+					<div class="login-story-copy">
+						<span class="login-chip">Desktop Access</span>
+						<h1>欢迎回来，继续轻松挑选你的下一台设备</h1>
+						<p>
+							这是独立的全屏登录页，不再嵌进首页式壳层里。保留原有登录逻辑，
+							但把进入账户系统的第一步做得更安静、更完整，也更像一个正式入口。
+						</p>
+					</div>
 
-        .login-header p {
-            color: #666;
-            font-size: 14px;
-        }
+					<div class="login-highlights">
+						<div class="login-highlight">
+							<span class="fa fa-leaf"></span>
+							<div>
+								<h2>清爽进入</h2>
+								<p>去掉多余嵌套和页面碎片，让登录动作更聚焦。</p>
+							</div>
+						</div>
+						<div class="login-highlight">
+							<span class="fa fa-shield"></span>
+							<div>
+								<h2>安全校验</h2>
+								<p>保留验证码与原有接口，不改你们现有登录链路。</p>
+							</div>
+						</div>
+						<div class="login-highlight">
+							<span class="fa fa-compass"></span>
+							<div>
+								<h2>轻松返回</h2>
+								<p>登录成功回首页，未登录也可以直接返回继续浏览。</p>
+							</div>
+						</div>
+					</div>
+				</div>
 
-        /* 登录方式切换 */
-        .login-tabs {
-            display: flex;
-            background: #f0f2f5;
-            border-radius: 8px;
-            padding: 4px;
-            margin-bottom: 25px;
-        }
+				<div class="login-panel">
+					<div class="login-panel-top">
+						<div>
+							<span class="login-panel-kicker">Account Login</span>
+							<h2>用户登录</h2>
+						</div>
+						<div id="error-msg" class="login-error"></div>
+					</div>
 
-        .login-tabs .tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px 0;
-            border-radius: 6px;
-            cursor: pointer;
-            color: #666;
-            transition: all 0.3s ease;
-        }
+					<form id="form-login" class="login-form" role="form">
+						<div class="login-field">
+							<label for="username">用户名</label>
+							<input id="username" name="username" type="text" class="form-control" placeholder="请输入用户名">
+						</div>
 
-        .login-tabs .tab.active {
-            background: #1677ff;
-            color: white;
-            font-weight: 500;
-        }
+						<div class="login-field">
+							<label for="password">密码</label>
+							<div class="login-password-row">
+								<input id="password" name="password" type="password" class="form-control" placeholder="请输入密码">
+								<button type="button" class="login-eye-btn" onclick="showPasswordOrNot('password','img')" aria-label="切换密码显示状态">
+									<img id="img" src="../images/img/open.jpeg" alt="显示或隐藏密码">
+								</button>
+							</div>
+						</div>
 
-        /* 表单控件 */
-        .form-group {
-            margin-bottom: 20px;
-        }
+						<div class="login-field">
+							<label for="code">验证码</label>
+							<div class="login-captcha-row">
+								<input id="code" name="code" type="text" class="form-control" placeholder="请输入验证码"/>
+								<img id="loginKaptcha" src="/kaptcha/kaptcha-image" onclick="reFlashImg('loginKaptcha')" alt="点击刷新验证码"/>
+							</div>
+						</div>
 
-        .form-group label {
-            display: block;
-            color: #333;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
+						<div class="login-actions">
+							<input id="btn-login" class="btn login-submit-btn" type="button" value="登录" />
+							<input id="btn-toIndex" class="btn login-back-btn" type="button" value="返回主页" />
+						</div>
 
-        .form-control {
-            border-radius: 8px;
-            border: 1px solid #e8e8e8;
-            padding: 12px 15px;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-control:focus {
-            border-color: #1677ff;
-            box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.1);
-        }
-
-        /* 密码框 */
-        .password-input-group {
-            position: relative;
-        }
-
-        .password-eye-btn {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #999;
-        }
-
-        /* 验证码 */
-        .captcha-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .captcha-group input {
-            flex: 1;
-        }
-
-        .captcha-img {
-            height: 46px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        /* 记住账号 */
-        .remember-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 25px;
-        }
-
-        /* 按钮 */
-        .btn-login {
-            width: 100%;
-            background: #1677ff;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 0;
-            font-size: 16px;
-            font-weight: 500;
-            transition: background 0.3s ease;
-        }
-
-        .btn-login:hover {
-            background: #4096ff;
-        }
-
-        .btn-back {
-            width: 100%;
-            background: #f5f5f5;
-            color: #333;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 0;
-            margin-top: 12px;
-            transition: background 0.3s ease;
-        }
-
-        .btn-back:hover {
-            background: #e8e8e8;
-        }
-
-        /* 底部链接 */
-        .login-footer {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .login-footer a {
-            color: #1677ff;
-            text-decoration: none;
-        }
-
-        /* 错误提示 */
-        .error-tip {
-            color: #ff4d4f;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
-        }
-
-        .has-error .form-control {
-            border-color: #ff4d4f;
-        }
-    </style>
-</head>
-<body>
-    <div class="login-card">
-        <div class="login-header">
-            <h2>用户登录</h2>
-            <p>欢迎回来，继续轻松挑选你的下一台设备</p>
-        </div>
-
-        <!-- 登录方式切换 -->
-        <div class="login-tabs">
-            <div class="tab active" data-type="password">密码登录</div>
-            <div class="tab" data-type="code">验证码登录</div>
-        </div>
-
-        <form id="form-login">
-            <div class="form-group">
-                <label for="username">用户名/手机号</label>
-                <input id="username" name="username" type="text" class="form-control" placeholder="请输入用户名/手机号">
-                <div class="error-tip"></div>
-            </div>
-
-            <!-- 密码登录组 -->
-            <div class="form-group password-group">
-                <label for="password">密码</label>
-                <div class="password-input-group">
-                    <input id="password" name="password" type="password" class="form-control" placeholder="请输入密码">
-                    <button type="button" class="password-eye-btn" onclick="showPasswordOrNot('password','img')">
-                        <img id="img" src="../images/img/open.jpeg" style="height: 18px;">
-                    </button>
-                </div>
-                <div class="error-tip"></div>
-            </div>
-
-            <!-- 验证码登录组（默认隐藏） -->
-            <div class="form-group code-group" style="display: none;">
-                <label for="code">验证码</label>
-                <div class="captcha-group">
-                    <input id="code" name="code" type="text" class="form-control" placeholder="请输入验证码"/>
-                    <button type="button" class="get-code btn btn-default">获取验证码</button>
-                </div>
-                <div class="error-tip"></div>
-            </div>
-
-            <!-- 图形验证码 -->
-            <div class="form-group captcha-img-group">
-                <label for="kaptchaCode">图形验证码</label>
-                <div class="captcha-group">
-                    <input id="kaptchaCode" name="kaptchaCode" type="text" class="form-control" placeholder="请输入图形验证码"/>
-                    <img id="loginKaptcha" src="/kaptcha/kaptcha-image" onclick="reFlashImg('loginKaptcha')" class="captcha-img">
-                </div>
-                <div class="error-tip"></div>
-            </div>
-
-            <!-- 记住账号 -->
-            <div class="remember-group">
-                <input type="checkbox" id="remember" name="remember">
-                <label for="remember">记住账号</label>
-            </div>
-
-            <div id="error-msg" style="color: #ff4d4f; margin-bottom: 15px; text-align: center;"></div>
-
-            <button id="btn-login" class="btn-login" type="button">登录</button>
-            <button id="btn-toIndex" class="btn-back" type="button">返回主页</button>
-        </form>
-
-        <div class="login-footer">
-            还没有账号？<a href="register.html">去注册</a>
-        </div>
-    </div>
-
-    <script>
-        // 密码显示/隐藏（保留原有逻辑）
-        function showPasswordOrNot(passwordId, imgId) {
-            const pwdInput = document.getElementById(passwordId);
-            const img = document.getElementById(imgId);
-            if (pwdInput.type === "password") {
-                pwdInput.type = "text";
-                img.src = "../images/img/close.jpeg";
-            } else {
-                pwdInput.type = "password";
-                img.src = "../images/img/open.jpeg";
-            }
-        }
-
-        // 刷新图形验证码（保留原有逻辑）
-        function reFlashImg(imgId) {
-            document.getElementById(imgId).src = "/kaptcha/kaptcha-image?timestamp=" + new Date().getTime();
-        }
-
-        $(function () {
-            // 错误提示方法
-            function showError(el, text) {
-                el.siblings('.error-tip').text(text).show();
-                el.closest('.form-group').addClass('has-error');
-                $('#error-msg').html('');
-            }
-            function hideError(el) {
-                el.siblings('.error-tip').text('').hide();
-                el.closest('.form-group').removeClass('has-error');
-            }
-
-            // 1. 登录方式切换逻辑
-            $('.login-tabs .tab').on('click', function() {
-                const type = $(this).data('type');
-                $('.login-tabs .tab').removeClass('active');
-                $(this).addClass('active');
-                
-                if (type === 'password') {
-                    $('.password-group').show();
-                    $('.code-group').hide();
-                    $('.captcha-img-group').show();
-                    $('#password').attr('required', true);
-                    $('#code').attr('required', false);
-                    $('#kaptchaCode').attr('required', true);
-                } else {
-                    $('.password-group').hide();
-                    $('.code-group').show();
-                    $('.captcha-img-group').hide();
-                    $('#password').attr('required', false);
-                    $('#code').attr('required', true);
-                    $('#kaptchaCode').attr('required', false);
-                }
-                // 清空所有错误提示
-                $('.error-tip').text('').hide();
-                $('#error-msg').html('');
-            });
-
-            // 2. 获取手机验证码逻辑
-            let codeTimer = null;
-            $('.get-code').on('click', function() {
-                const username = $('#username').val();
-                if (!username) {
-                    showError($('#username'), '请先输入用户名/手机号');
-                    return;
-                }
-                
-                // 倒计时逻辑
-                let count = 60;
-                $(this).text(`${count}s后重新获取`).attr('disabled', true).addClass('disabled');
-                
-                codeTimer = setInterval(() => {
-                    count--;
-                    if (count <= 0) {
-                        clearInterval(codeTimer);
-                        $(this).text('获取验证码').attr('disabled', false).removeClass('disabled');
-                    } else {
-                        $(this).text(`${count}s后重新获取`);
-                    }
-                }, 1000);
-                
-                alert('验证码已发送，验证码：123456');
-            });
-
-            // 3. 自动填充记住的账号
-            const savedUsername = localStorage.getItem('savedUsername');
-            if (savedUsername) {
-                $('#username').val(savedUsername);
-                $('#remember').prop('checked', true);
-            }
-
-            // 4. 登录逻辑（保留原有AJAX接口）
-            $("#btn-login").click(function () {
-                const activeTab = $('.login-tabs .tab.active').data('type');
-                let isValid = true;
-
-                // 清空所有错误提示
-                $('.error-tip').text('').hide();
-                $('#error-msg').html('');
-                $('.form-group').removeClass('has-error');
-
-                // 校验用户名
-                if (!$('#username').val()) {
-                    showError($('#username'), '请输入用户名/手机号');
-                    isValid = false;
-                } else {
-                    hideError($('#username'));
-                }
-
-                // 密码登录校验
-                if (activeTab === 'password') {
-                    if (!$('#password').val()) {
-                        showError($('#password'), '请输入密码');
-                        isValid = false;
-                    } else {
-                        hideError($('#password'));
-                    }
-                    if (!$('#kaptchaCode').val()) {
-                        showError($('#kaptchaCode'), '请输入图形验证码');
-                        isValid = false;
-                    } else {
-                        hideError($('#kaptchaCode'));
-                    }
-                } else {
-                    if (!$('#code').val()) {
-                        showError($('#code'), '请输入验证码');
-                        isValid = false;
-                    } else {
-                        hideError($('#code'));
-                    }
-                }
-
-                if (isValid) {
-                    $(this).text('正在登录...').attr('disabled', true);
-
-                    $.ajax({
-                        url : "/user",
-                        type: "get",
-                        data: $("#form-login").serialize(),
-                        dataType: "json",
-                        success: function (res) {
-                            if (res.status === 200) {
-                                if ($('#remember').is(':checked')) {
-                                    localStorage.setItem('savedUsername', $('#username').val());
-                                } else {
-                                    localStorage.removeItem('savedUsername');
-                                }
-                                alert("登录成功！");
-                                window.location.href = "index.html";
-                                sessionStorage.setItem("user", JSON.stringify(res.data));
-                            } else {
-                                $('#error-msg').html(res.message);
-                                $('#btn-login').text('登录').attr('disabled', false);
-                            }
-                        },
-                        error: function (error) {
-                            alert(error.status + "错误,服务器出现故障，请等待攻城狮修复！！");
-                            $('#btn-login').text('登录').attr('disabled', false);
-                        }
-                    });
-                }
-            });
-
-            // 返回主页逻辑
-            $("#btn-toIndex").click(function () {
-                location.href = "index.html";
-            });
-        });
-    </script>
-</body>
+						<div class="login-bottom-row">
+							<span>还没有账号？</span>
+							<a href="register.html">去注册</a>
+						</div>
+					</form>
+				</div>
+			</section>
+		</main>
+	</body>
 </html>
