@@ -1,5 +1,6 @@
 package top.year21.computerstore.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import top.year21.computerstore.entity.Product;
 
 import java.util.List;
@@ -41,4 +42,16 @@ public interface ProductMapper {
      * @return java.util.List<top.year21.computerstore.entity.Product>
      **/
     List<Product> queryProductByTitle(String title);
+
+    /**
+     * Description : 根据名称关键字和价格区间进行模糊查询
+     * @date 2024/05/24
+     * @param title 商品名称关键字
+     * @param minPrice 最低价格（可为null）
+     * @param maxPrice 最高价格（可为null）
+     * @return java.util.List<top.year21.computerstore.entity.Product>
+     **/
+    List<Product> queryProductByTitleWithPrice(@Param("title") String title,
+                                               @Param("minPrice") Integer minPrice,
+                                               @Param("maxPrice") Integer maxPrice);
 }

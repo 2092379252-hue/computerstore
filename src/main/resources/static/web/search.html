@@ -1,278 +1,311 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<!--edge浏览器H5兼容设置-->
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<!--360浏览器H5兼容设置-->
-		<meta name="renderer" content="webkit" />
-		<title>电脑商城</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<!--导入核心文件-->
-		<script src="../bootstrap3/js/holder.js"></script>
-		<link href="../bootstrap3/css/bootstrap.css" rel="stylesheet" type="text/css">
-		<script src="../bootstrap3/jquery-1.8.3.min.js"></script>
-		<script src="../bootstrap3/js/bootstrap.js"></script>
-		<!-- 字体图标 -->
-		<link rel="stylesheet" href="../bootstrap3/font-awesome-4.7.0/css/font-awesome.css" />
-		<link rel="stylesheet" type="text/css" href="../css/layout.css" />
-		<link rel="stylesheet" type="text/css" href="../css/top.css" />
-		<link rel="stylesheet" type="text/css" href="../css/footer.css" />
-		<link rel="stylesheet" type="text/css" href="../css/search.css" />
-		<link rel="stylesheet" type="text/css" href="../css/imgmove.css" />
-		<script src="../js/imgmove.js" type="text/javascript" charset="utf-8"></script>
-		<script src="../js/someFunction.js" type="text/javascript" charset="utf-8"></script>
-		<script src="../js/herf.js" type="text/javascript" charset="utf-8"></script>
-		<script src="../js/someFunction.js" type="text/javascript" charset="utf-8"></script>
-		<script type="text/javascript">
-			//获取上个页面传来的搜索关键字
-			//getUrlParam取的中文会乱码，不知道咋回事，只能用这个截断一下获取
-			var title = getOne();
-			title = title.substring(0,title.indexOf("&"))
-			//获取上个页面传来的页数
-			var num = getUrlParam("pageNum");
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="renderer" content="webkit" />
+	<title>搜索结果 · 电脑商城</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Bootstrap 3 & jQuery -->
+	<link href="../bootstrap3/css/bootstrap.css" rel="stylesheet" type="text/css">
+	<script src="../bootstrap3/jquery-1.9.1.min.js"></script>
+	<script src="../bootstrap3/js/bootstrap.js"></script>
+	<!-- 字体图标 -->
+	<link rel="stylesheet" href="../bootstrap3/font-awesome-4.7.0/css/font-awesome.css" />
+	<!-- 全局样式 -->
+	<link rel="stylesheet" type="text/css" href="../css/layout.css" />
+	<link rel="stylesheet" type="text/css" href="../css/top.css" />
+	<link rel="stylesheet" type="text/css" href="../css/footer.css" />
+	<!-- 搜索页样式 -->
+	<link rel="stylesheet" type="text/css" href="../css/search.css" />
+	<!-- 其他 -->
+	<link rel="stylesheet" type="text/css" href="../css/imgmove.css" />
+	<script src="../js/imgmove.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/someFunction.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/herf.js" type="text/javascript" charset="utf-8"></script>
 
-			//为了查询设置的全局参数
-			var pageNum = 0;
-			var pageSize = 0;
-			var prePage = 0;
-			var nextPage = 0;
-			var navigatepageNums = [];
+	<script type="text/javascript">
+		// 获取上个页面传来的搜索关键字和分页参数
+		var title = getOne();
+		title = title.substring(0, title.indexOf("&"));
+		var num = getUrlParam("pageNum");
+		var minPriceParam = getUrlParam("minPrice");
+		var maxPriceParam = getUrlParam("maxPrice");
 
-			//记录商品收藏状态和收藏后返回的收藏的fid
-			var status = 0; //0未收藏，1已收藏
-			var fid = 0;
+		// 全局分页参数
+		var pageNum = 0, pageSize = 0, prePage = 0, nextPage = 0;
+		var navigatepageNums = [];
+		var currentProductList = [];
+		var currentMinPrice = minPriceParam ? parseInt(minPriceParam) : null;
+		var currentMaxPrice = maxPriceParam ? parseInt(maxPriceParam) : null;
 
-			//根据分页条的选择的页数进行查询
-			function PaginationListSelect(num,size,res) {
-				//进行查询的关键字
-				let title =  $("#search").val()
-				location.href = "/web/search.html?title=" + title + "&pageNum=" + num + "&pageSize=" + size
-				//填充分页条信息
-				addPaginationData(res);
+		// 根据分页条的选择进行查询（保留价格筛选条件）
+		function PaginationListSelect(pNum, pSize) {
+			var keyword = $("#search").val();
+			var url = "/web/search.html?title=" + encodeURIComponent(keyword) + "&pageNum=" + pNum + "&pageSize=" + pSize;
+			if (currentMinPrice !== null && currentMinPrice !== '') url += "&minPrice=" + currentMinPrice;
+			if (currentMaxPrice !== null && currentMaxPrice !== '') url += "&maxPrice=" + currentMaxPrice;
+			location.href = url;
+		}
+
+		// 加入收藏
+		function addToCollect(pid, btnElement) {
+			if (sessionStorage.getItem("user") == null) {
+				alert("您尚未登录，请先登录！");
+				location.href = "login.html";
+				return false;
 			}
-
-			//加入收藏
-			function addToCollect(id,num) {
-				//判断是否登录
-				if (sessionStorage.getItem("user") == null){
-					alert("您尚未登录，请先登录！")
-					location.href = "login.html"
-					return false;
-				}
-				if (status === '0') {
-					if (confirm("确定要加入收藏吗？")) {
-						$.ajax({
-							url: "/favorites/addFavorites",
-							type: "post",
-							data: {pid: id},
-							dataType: "json",
-							success: function (res) {
-								alert("收藏成功！")
-								//收藏爱心变化、收藏状态置为1，保存返回的fid
-								status = '1';
-								fid = res.data;
-								$("#product" + num).html("<span class='fa fa-heart'></span>取消收藏");
-							},
-							error: function (err) {
-								alert("服务器出现错误，加入购物车失败！")
-							}
-						})
-					}
-				}else if (status === '1'){
-					if (confirm("确定要取消收藏吗？")){
-						//取消商品收藏的方法
-						cancelCollect(fid);
-						//收藏爱心变化并将收藏状态置为0
-						status = '0'
-						$("#product"+num).html("<span class='fa fa-heart-o'></span>加入收藏");
-					}
-				}
+			var $btn = $(btnElement);
+			if ($btn.hasClass("favorited")) {
+				alert("该商品已在收藏夹中");
+				return;
 			}
-
-			//加入购物车
-			function addToCart(pid,price){
-				//判断是否登录
-				if (sessionStorage.getItem("user") == null){
-					alert("您尚未登录，请先登录！")
-					location.href = "login.html"
-					return false;
-				}
-				if (confirm("确定要将此商品加入购物车吗？")){
-					$.ajax({
-						url: "/cart/addCart",
-						type: "post",
-						data: {pid:pid,price:price,num:1},
-						dataType: "json",
-						success: function (res) {
-							if (res.status === 200){
-								alert("已成功加入购物车，在购物车等您结算哟！")
-							}
-						},
-						error : function (err) {
-							alert("服务器出现错误，加入购物车失败！")
-						}
-					})
-				}
-			}
-			//模糊框搜索方法
-			function searchByTitle(pageNum,pageSize,title){
+			if (confirm("确定要加入收藏吗？")) {
 				$.ajax({
-					url: "/product/" + pageNum + "/" + pageSize + "/" + title,
+					url: "/favorites/addFavorites",
+					type: "post",
+					data: { pid: pid },
 					dataType: "json",
-					success: function (res) {
-						if (res.data.list.length !== 0){ //表示搜索有内容
-							//将搜索框的值变为搜索信息
-							$("#search").val(title)
-							$("#searchText").html("\""+ title + "\"")
-							$("#resultText").html("的搜索结果：")
-							addData(res)
-						}else{ //表示搜索没有内容
-							$("#search").val(title)
-							$("#resultText").html("sorry，你的搜索暂无内容！")
-							$("#searchText").empty()
-							$("#productList").empty()
-							$("#PaginationList").empty()
-						}
+					success: function(res) {
+						alert("收藏成功！");
+						$btn.addClass("favorited").html('<i class="fa fa-heart"></i> 已收藏');
+					},
+					error: function() { alert("收藏失败，请稍后重试"); }
+				});
+			}
+		}
 
+		// 加入购物车
+		function addToCart(pid, price) {
+			if (sessionStorage.getItem("user") == null) {
+				alert("您尚未登录，请先登录！");
+				location.href = "login.html";
+				return false;
+			}
+			if (confirm("确定要将此商品加入购物车吗？")) {
+				$.ajax({
+					url: "/cart/addCart",
+					type: "post",
+					data: { pid: pid, price: price, num: 1 },
+					dataType: "json",
+					success: function(res) {
+						if (res.status === 200) alert("已成功加入购物车，在购物车等您结算哟！");
+					},
+					error: function() { alert("加入购物车失败，请稍后重试"); }
+				});
+			}
+		}
+
+		// 前端排序
+		function sortProducts(sortType) {
+			if (!currentProductList.length) return;
+			var sorted = [...currentProductList];
+			if (sortType === 'price-asc') sorted.sort((a,b) => a.price - b.price);
+			else if (sortType === 'price-desc') sorted.sort((a,b) => b.price - a.price);
+			else if (sortType === 'sales') sorted.sort((a,b) => (b.sales || 0) - (a.sales || 0));
+			else sorted.sort((a,b) => a.id - b.id);
+			renderProductList(sorted);
+			$(".sort-btn").removeClass("active");
+			if (sortType === 'default') $("#sort-default").addClass("active");
+			else if (sortType === 'price-asc') $("#sort-price-asc").addClass("active");
+			else if (sortType === 'price-desc') $("#sort-price-desc").addClass("active");
+			else if (sortType === 'sales') $("#sort-sales").addClass("active");
+		}
+
+		// 渲染商品列表
+		function renderProductList(products) {
+			$("#productList").empty();
+			if (!products || products.length === 0) {
+				$("#productList").html('<div class="col-md-12"><div class="no-result">暂无相关商品，试试其他关键词吧~</div></div>');
+				return;
+			}
+			var html = '';
+			for (var i = 0; i < products.length; i++) {
+				var p = products[i];
+				var imgUrl = ".." + p.image + "1_big.png";
+				html += `
+                    <div class="col-md-3 col-sm-4 col-xs-6">
+                        <div class="product-card">
+                            <a href="product.html?id=${p.id}" class="card-img-link">
+                                <img src="${imgUrl}" class="card-img" alt="${p.title}">
+                            </a>
+                            <div class="card-info">
+                                <a href="product.html?id=${p.id}" class="card-title text-row-2">${escapeHtml(p.title)}</a>
+                                <div class="card-price">¥${p.price}</div>
+                                <div class="card-sales">销量 ${p.sales || 0}件</div>
+                                <div class="card-actions">
+                                    <button class="btn-cart" onclick="addToCart(${p.id}, ${p.price})">
+                                        <i class="fa fa-cart-plus"></i> 购物车
+                                    </button>
+                                    <button class="btn-fav" onclick="addToCollect(${p.id}, this)">
+                                        <i class="fa fa-heart-o"></i> 收藏
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+			}
+			$("#productList").html(html);
+		}
+
+		function escapeHtml(str) {
+			if (!str) return '';
+			return str.replace(/[&<>]/g, function(m) {
+				if (m === '&') return '&amp;';
+				if (m === '<') return '&lt;';
+				if (m === '>') return '&gt;';
+				return m;
+			});
+		}
+
+		// 填充分页条
+		function addPaginationData(res) {
+			$("#PaginationList").empty();
+			pageNum = res.data.pageNum;
+			pageSize = res.data.pageSize;
+			prePage = res.data.prePage;
+			nextPage = res.data.nextPage;
+			navigatepageNums = res.data.navigatepageNums || [];
+
+			var ul = $('<ul class="pagination pagination-sm"></ul>');
+			if (res.data.isFirstPage) {
+				ul.append('<li class="disabled"><span>«</span></li>');
+			} else {
+				ul.append(`<li><a href="javascript:void(0)" onclick="PaginationListSelect(${prePage}, ${pageSize})">«</a></li>`);
+			}
+			for (var i = 0; i < navigatepageNums.length; i++) {
+				var p = navigatepageNums[i];
+				if (p === pageNum) {
+					ul.append(`<li class="active"><span>${p}</span></li>`);
+				} else {
+					ul.append(`<li><a href="javascript:void(0)" onclick="PaginationListSelect(${p}, ${pageSize})">${p}</a></li>`);
+				}
+			}
+			if (res.data.isLastPage) {
+				ul.append('<li class="disabled"><span>»</span></li>');
+			} else {
+				ul.append(`<li><a href="javascript:void(0)" onclick="PaginationListSelect(${nextPage}, ${pageSize})">»</a></li>`);
+			}
+			$("#PaginationList").append(ul);
+		}
+
+		// 请求搜索数据（支持价格区间）
+		function searchByTitle(pageNum, pageSize, title, minPrice, maxPrice) {
+			var url = "/product/" + pageNum + "/" + pageSize + "/" + encodeURIComponent(title);
+			var params = [];
+			if (minPrice !== null && minPrice !== undefined && minPrice !== '') params.push("minPrice=" + minPrice);
+			if (maxPrice !== null && maxPrice !== undefined && maxPrice !== '') params.push("maxPrice=" + maxPrice);
+			if (params.length) url += "?" + params.join("&");
+
+			$.ajax({
+				url: url,
+				dataType: "json",
+				success: function(res) {
+					if (res.data.list && res.data.list.length > 0) {
+						$("#search").val(title);
+						currentProductList = res.data.list;
+						renderProductList(currentProductList);
+						addPaginationData(res);
+						bindSortEvents();
+					} else {
+						$("#search").val(title);
+						$("#productList").html('<div class="col-md-12"><div class="no-result">抱歉，没有找到与 "' + title + '" 相关的商品</div></div>');
+						$("#PaginationList").empty();
 					}
-				})
+				},
+				error: function() {
+					$("#productList").html('<div class="col-md-12"><div class="no-result">网络错误，请稍后重试</div></div>');
+				}
+			});
+		}
+
+		// 价格筛选（select下拉框）
+		function initPriceSelect() {
+			$("#priceFilterSelect").on('change', function() {
+				var val = $(this).val();
+				var minPrice = null, maxPrice = null;
+				if (val === "0-3000") {
+					minPrice = 0;
+					maxPrice = 3000;
+				} else if (val === "3000-6000") {
+					minPrice = 3000;
+					maxPrice = 6000;
+				} else if (val === "6000+") {
+					minPrice = 6000;
+					maxPrice = 999999;
+				}
+				currentMinPrice = minPrice;
+				currentMaxPrice = maxPrice;
+				searchByTitle(1, 12, $("#search").val(), currentMinPrice, currentMaxPrice);
+			});
+		}
+
+		function setActiveFilter() {
+			if (currentMinPrice === 0 && currentMaxPrice === 3000) {
+				$("#priceFilterSelect").val("0-3000");
+			} else if (currentMinPrice === 3000 && currentMaxPrice === 6000) {
+				$("#priceFilterSelect").val("3000-6000");
+			} else if (currentMinPrice === 6000 && currentMaxPrice === 999999) {
+				$("#priceFilterSelect").val("6000+");
+			} else {
+				$("#priceFilterSelect").val("all");
 			}
+		}
 
-			//将查询得到的商品数据进行填充
-			function addData(res) {
-				//在填充数据之前必须先将这两个div标签内的所有元素情况，不然会出现叠加情况
-				$("#productList").empty();
-				$("#PaginationList").empty();
-				let productListStr = ""
-				//获取分页信息中商品的数量
-				let dataLength = res.data.list.length
-				//填充商品信息至页面
-				for (let i = 0; i < dataLength; i++) {
-					let product = res.data.list[i]
-					productListStr = "<div class=\"col-md-3\">"
-							+ "<div class=\"goods-panel\">"
-							+ "<img src=.." + product.image + "collect.png" + "  class=\"img-responsive\" />"
-							+ "<p>￥" + product.price  + ".00" + "</p>"
-							+ "<div class=\"text-row-3\">"
-							+ "<a href=product.html?pid=" + product.id
-							+ "><small>"
-							+ product.title
-							+ "</small></a></div>"
-							+ "<span style='padding-right: 10px'>"
-							+ "<a href='javascript:void(0)' onclick='addToCollect(#{id},#{num})' id='product#{num}' class='btn btn-default btn-xs add-fav'><span class='fa fa-heart-o'></span>加入收藏</a>"
-							+ "</span>"
-							+ "<span style='padding-right: 10px'>"
-							+ "<a href='javascript:void(0)' onclick='addToCart(#{id},#{price})' class=\"btn btn-default btn-xs add-cart\"><span class=\"fa fa-cart-arrow-down\"></span>加入购物车</a>"
-							+ "</span></div></div>"
+		function bindSortEvents() {
+			$("#sort-default").off('click').on('click', function() { sortProducts('default'); });
+			$("#sort-price-asc").off('click').on('click', function() { sortProducts('price-asc'); });
+			$("#sort-price-desc").off('click').on('click', function() { sortProducts('price-desc'); });
+			$("#sort-sales").off('click').on('click', function() { sortProducts('sales'); });
+		}
 
-					productListStr = productListStr.replaceAll("#{id}",product.id)
-					productListStr = productListStr.replaceAll("#{price}",product.price)
-					productListStr = productListStr.replaceAll("#{num}",product.id)
-					$("#productList").append(productListStr)
-					//激活鼠标进入图片有变化的功能
-					classFunction();
-				}
-				//填充分页条信息
-				addPaginationData(res);
-			}
+		$(function() {
+			$(".header").load("./components/head.html");
+			$(".footer").load("./components/footer.html");
+			$(".middleNavigation").load("./components/middleNavigationBar.html");
+			initPriceSelect();
+			setActiveFilter();
+			bindSortEvents(); // 确保排序事件绑定
+			searchByTitle(num, 12, title, currentMinPrice, currentMaxPrice);
+		});
+	</script>
+</head>
 
-			//填充分页条信息
-			function addPaginationData(res) {
-				//重新填充分页条
-				//将数据返回的部分需要数据进行填充至全局参数
-				pageNum = res.data.pageNum //当前页
-				pageSize = res.data.pageSize  //每页显示数
-				prePage =  res.data.prePage //上一页
-				nextPage = res.data.nextPage //下一页
-				navigatepageNums = res.data.navigatepageNums //分页栏的数字
+<body>
+<div class="header"></div>
+<div class="middleNavigation"></div>
 
-				let firstPage = "<a id='first' href='#' onclick='PaginationListSelect(prePage,pageSize)' style='padding-right: 8px'>上一页</a>"
-				let lastPage = "<a id='end' href='javascript:void(0)' onclick='PaginationListSelect(nextPage,pageSize)' style='padding-right: 8px'>下一页</a>"
-				let PaginationListStr = "";
-				//判断是否是第一页
-				if (res.data.isFirstPage){ //为true表示当前是第一页
-					firstPage = "<a id='first' href='javascript:void(0)' "
-							+ "style='opacity: 0.2;padding-right: 8px;color: black'>上一页</a>"
-					PaginationListStr += firstPage;
-				}else { //为false表示当前不是第一页
-					PaginationListStr += firstPage;
-				}
-				//填充分页的页码数
-				for (let i = 0; i < navigatepageNums.length; i++) {
-					//当前页的页码
-					let nowNum = navigatepageNums[i]
-					if (nowNum === pageNum){ //相等表示i的次数和当前也相同，对页数显示做变化
-						PaginationListStr += "<a href='javascript:void(0)' " +
-								"style='padding-right: 8px;color: black' disabled='disabled'>" + "【"  + nowNum + "】" +"</a>"
-					}else {
-						PaginationListStr += "<a href='javascript:void(0)' onclick='PaginationListSelect(#{nowNum},pageSize)' " +
-								"style='padding-right: 8px'>" + nowNum +"</a>"
-					}
-					PaginationListStr = PaginationListStr.replaceAll("#{nowNum}",nowNum)
-
-				}
-				//判断是否是末页
-				if (!res.data.isLastPage){ //取反为false表示当前是末页
-					PaginationListStr += lastPage;
-				}else { //为true表示当前是末页
-					lastPage =  "<a id='end' href='javascript:void(0)' style='opacity: 0.2;padding-right: 8px;color: black'>下一页</a>"
-					PaginationListStr += lastPage;
-				}
-				//将拼接的str串插入指定id处
-				$("#PaginationList").append(PaginationListStr)
-			}
-
-			$(function () {
-
-				//引入公共头部、中间导航条以及页脚
-				$(".header").load("./components/head.html")
-				$(".footer").load("./components/footer.html")
-				$(".middleNavigation").load("./components/middleNavigationBar.html")
-
-				searchByTitle(num,12,title)
-			})
-
-		</script>
-	</head>
-
-	<body>
-		<!--头部开始-->
-		<div class="header"></div>
-		<!--头部结束-->
-
-		<!--中间导航条开始 -->
-		<div class="middleNavigation"></div>
-		<!--中间导航条结束-->
-
-		<div class="col-md-offset-2" style="padding-bottom: 20px;">
-
-			<div style="font-weight: bolder;color: red;font-size: larger">
-				<span id="searchText" style="color: black;font-size: smaller"></span><span id="resultText">&nbsp;的搜索结果：</span>
+<div class="container search-container">
+	<div class="row">
+		<div class="col-md-10 col-md-offset-1">
+			<!-- 搜索头部：排序栏 + 筛选下拉框 -->
+			<div class="search-header">
+				<div class="sort-bar">
+					<button id="sort-default" class="sort-btn active">综合排序</button>
+					<button id="sort-price-asc" class="sort-btn">价格升序</button>
+					<button id="sort-price-desc" class="sort-btn">价格降序</button>
+					<button id="sort-sales" class="sort-btn">销量最多</button>
+					<div class="filter-dropdown">
+						<select id="priceFilterSelect">
+							<option value="all">筛选</option>
+							<option value="0-3000">0-3000元</option>
+							<option value="3000-6000">3000-6000元</option>
+							<option value="6000+">6000元以上</option>
+						</select>
+					</div>
+				</div>
 			</div>
+
+			<!-- 商品网格 -->
+			<div id="productList" class="row product-grid"></div>
+
+			<!-- 分页 -->
+			<div id="PaginationList" class="text-center"></div>
 		</div>
+	</div>
+</div>
 
-		<div class="container">
-			<div id="productList" class="col-md-offset-1 col-md-10">
-				<!--		待填充内容		-->
-
-			</div>
-
-			<div class="col-md-offset-1 col-md-10">
-				<p id="PaginationList" align="center">
-					<!--		待填充内容		-->
-
-				</p>
-			</div>
-
-		</div>
-
-
-		<div class="clearfix"></div>
-		<!--页脚开始-->
-		<div class="footer"></div>
-		<!--页脚结束-->
-
-	</body>
-
+<div class="footer"></div>
+</body>
 </html>

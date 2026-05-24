@@ -75,13 +75,17 @@ public class IProductServiceImpl implements IProductService {
      * @return com.github.pagehelper.PageInfo<top.year21.computerstore.entity.Product>
      **/
     @Override
-    public PageInfo<Product> queryProductByTitle(Integer pageNum, Integer pageSize,String title) {
-        //开启分页功能
-        PageHelper.startPage(pageNum,pageSize);
-        //调用持久层方法进行查询
+    // 原有的三个参数方法（保留，供不传价格区间时调用）
+    public PageInfo<Product> queryProductByTitle(Integer pageNum, Integer pageSize, String title) {
+        PageHelper.startPage(pageNum, pageSize);
         List<Product> products = productMapper.queryProductByTitle(title);
-        //返回分页数据
-        PageInfo<Product> pageInfo = new PageInfo<>(products);
-        return pageInfo;
+        return new PageInfo<>(products);
+    }
+
+    // 新增的四个参数方法（支持价格区间）
+    public PageInfo<Product> queryProductByTitle(Integer pageNum, Integer pageSize, String title, Integer minPrice, Integer maxPrice) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Product> products = productMapper.queryProductByTitleWithPrice(title, minPrice, maxPrice);
+        return new PageInfo<>(products);
     }
 }

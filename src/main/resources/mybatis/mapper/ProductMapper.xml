@@ -21,35 +21,49 @@
         <result property="modifiedUser" column="modified_user"/>
     </resultMap>
 
-<!--List<Product> queryPriorityProduct();-->
+    <!--List<Product> queryPriorityProduct();-->
     <select id="queryPriorityProduct" resultMap="queryProduct">
         SELECT id,title,price,image FROM t_product
-                                    where status = 1
-                                    ORDER BY priority DESC
-                                    LIMIT 0,4 ;
+        where status = 1
+        ORDER BY priority DESC
+            LIMIT 0,4 ;
     </select>
 
-<!--    List<Product> queryTheNewProduct();-->
+    <!--List<Product> queryTheNewProduct();-->
     <select id="queryTheNewProduct" resultMap="queryProduct">
-       SELECT id,title,price,image FROM t_product
-                                    WHERE category_id = 163
-                                    and status = 1
-                                    ORDER BY created_time DESC
-                                    LIMIT 0,4 ;
+        SELECT id,title,price,image FROM t_product
+        WHERE category_id = 163
+          and status = 1
+        ORDER BY created_time DESC
+            LIMIT 0,4 ;
     </select>
 
-<!--     Product queryProductById(Integer id);-->
+    <!-- Product queryProductById(Integer id); -->
     <select id="queryProductById" resultMap="queryProduct">
         select title,sell_point,price,image,status,num from t_product where id = #{id}
     </select>
 
-<!--List<Product> queryProductByTitle(String title);-->
-<!-- 模糊查询,只能使用${},若使用#{}，占位符会被解析成？，当中参数里面的一部分，而不是起填充的作用-->
+    <!-- List<Product> queryProductByTitle(String title); 模糊查询 -->
     <select id="queryProductByTitle" resultMap="queryProduct">
         SELECT id,title,sell_point,price,image
         FROM t_product
         WHERE STATUS = 1
-        AND title LIKE '%${title}%'
+          AND title LIKE '%${title}%'
+        ORDER BY priority DESC
+    </select>
+
+    <!-- 新增：支持价格区间筛选的模糊查询 -->
+    <select id="queryProductByTitleWithPrice" resultMap="queryProduct">
+        SELECT id, title, sell_point, price, image
+        FROM t_product
+        WHERE STATUS = 1
+        AND title LIKE CONCAT('%', #{title}, '%')
+        <if test="minPrice != null">
+            AND price >= #{minPrice}
+        </if>
+        <if test="maxPrice != null">
+            AND price &lt;= #{maxPrice}
+        </if>
         ORDER BY priority DESC
     </select>
 </mapper>
