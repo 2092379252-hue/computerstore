@@ -24,6 +24,9 @@
         <result property="password" column="password"/>
         <result property="salt" column="salt"/>
         <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="nickname" column="nickname"/>
+        <result property="birthday" column="birthday"/>
         <result property="gender" column="gender"/>
         <result property="avatar" column="avatar"/>
         <result property="isDelete" column="is_delete"/>
@@ -53,6 +56,12 @@
 <!--    int UpdateUserInfo(****)-->
     <update id="UpdateUserInfo">
         update t_user set
+                    <if test="nickname != null and nickname != ''">
+                        nickname = #{nickname},
+                    </if>
+                    <if test="birthday != null">
+                        birthday = #{birthday},
+                    </if>
                     <if test="phone != null and phone != ''">
                          phone = #{phone},
                     </if>

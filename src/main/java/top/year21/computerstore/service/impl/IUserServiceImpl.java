@@ -8,6 +8,7 @@ import top.year21.computerstore.entity.User;
 import top.year21.computerstore.mapper.UserMapper;
 import top.year21.computerstore.service.IUserService;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -171,7 +172,7 @@ public class IUserServiceImpl implements IUserService {
      * @return int
      **/
     @Override
-    public void userUpdateInfo(String phone, String email, Integer gender,String username,Integer uid) {
+    public void userUpdateInfo(String nickname, LocalDate birthday, String phone, String email, Integer gender, String username, Integer uid) {
 
         //获取用户id并判断用户是否存在
         User user = userMapper.queryUserByUid(uid);
@@ -181,7 +182,7 @@ public class IUserServiceImpl implements IUserService {
         }
 
         //修改用户信息
-        int result = userMapper.UpdateUserInfo(phone, email, gender, username, new Date(), uid);
+        int result = userMapper.UpdateUserInfo(nickname, birthday, phone, email, gender, username, new Date(), uid);
 
         if (result == 0){
             throw new InsertException("数据库或服务器异常，个人资料修改失败");

@@ -3,6 +3,7 @@ package top.year21.computerstore.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDate;
 
 /**
  * @author hcxs1986
@@ -20,6 +21,8 @@ public class User extends BaseEntity {
     private String salt; //用于加密密码
     private String phone;
     private String email;
+    private String nickname;
+    private LocalDate birthday;
     private Integer gender;//'性别:0-女，1-男',
     private String avatar;
     private Integer isDelete;

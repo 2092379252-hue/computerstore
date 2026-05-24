@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,50 +20,60 @@
     </style>
     <script type="text/javascript">
         $(function () {
-            // 加载公共组件
-            $(".header").load("components/head.html")
-            $(".footer").load("components/footer.html")
-            $(".middleNavigation").load("components/middleNavigationBar.html")
+            $(".header").load("components/head.html");
+            $(".footer").load("components/footer.html");
+            $(".middleNavigation").load("components/middleNavigationBar.html");
 
-            // 获取用户信息
+            function fillUserForm(data) {
+                $("#username").val(data.username || "");
+                $("#nickname").val(data.nickname || "");
+                $("#phone").val(data.phone || "");
+                $("#email").val(data.email || "");
+                $("#birthday").val(data.birthday || "");
+
+                if (data.gender === 0) {
+                    $("#gender-female").prop("checked", true);
+                } else {
+                    $("#gender-male").prop("checked", true);
+                }
+            }
+
             $.ajax({
                 url: "/user/queryUser",
                 type: "get",
                 dataType: "json",
                 success: function (res) {
                     if (res.status === 200) {
-                        $("#username").val(res.data.username || "");
-                        $("#phone").val(res.data.phone || "");
-                        $("#email").val(res.data.email || "");
-                        // 性别赋值
-                        if (res.data.gender === 0) {
-                            $("#gender-female").prop("checked", true);
-                        } else {
-                            $("#gender-male").prop("checked", true);
-                        }
+                        fillUserForm(res.data);
                     }
                 },
-                error: function (error) {
+                error: function () {
                     $("#error-msg").text("服务器异常，无法加载用户信息！");
                 }
             });
 
-            // 重置表单
             $("#btn-reset").click(function () {
                 $("#form-change-info")[0].reset();
-                $("#error-msg").empty();
+                $("#error-msg").empty().css("color", "red");
             });
 
-            // 修改资料提交
             $("#btn-change-info").click(function () {
-                if ($(this).hasClass("disabled")) return;
+                if ($(this).hasClass("disabled")) {
+                    return;
+                }
 
-                // 验证确认
-                if (!confirm("确定要修改个人资料吗？")) return;
+                if (!confirm("确定要修改个人资料吗？")) {
+                    return;
+                }
 
-                // 数据验证
+                const nickname = $("#nickname").val().trim();
                 const phone = $("#phone").val().trim();
                 const email = $("#email").val().trim();
+
+                if (!nickname) {
+                    $("#error-msg").text("昵称不能为空！");
+                    return false;
+                }
                 if (!phone) {
                     $("#error-msg").text("手机号不能为空！");
                     return false;
@@ -73,25 +83,21 @@
                     return false;
                 }
 
-                // 手机号验证
                 const checkPhone = /^[1][3-9][0-9]{9}$/;
                 if (!checkPhone.test(phone)) {
                     $("#error-msg").text("手机号格式不正确（13-19开头的11位数字）！");
                     return false;
                 }
 
-                // 邮箱验证
                 const checkEmail = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
                 if (!checkEmail.test(email)) {
                     $("#error-msg").text("邮箱格式不正确（例：user@example.com）！");
                     return false;
                 }
 
-                // 提交状态处理
                 $(this).addClass("disabled").val("提交中...");
                 $(".loading").show();
 
-                // 提交请求
                 $.ajax({
                     url: "/user/updateInfo",
                     type: "post",
@@ -99,35 +105,31 @@
                     dataType: "json",
                     success: function (res) {
                         if (res.status === 200) {
-                            $("#error-msg").text("修改成功！").css("color", "#00cc00");
+                            $("#error-msg").text("修改成功！").css("color", "#00aa55");
                             sessionStorage.setItem("user", JSON.stringify(res.data));
-                            // 3秒后刷新
-                            setTimeout(() => location.reload(), 1500);
+                            fillUserForm(res.data);
                         } else {
-                            $("#error-msg").text(res.message || "修改失败！");
+                            $("#error-msg").text(res.message || "修改失败！").css("color", "red");
                         }
                     },
-                    error: function (error) {
-                        $("#error-msg").text("服务器异常，修改失败！");
+                    error: function () {
+                        $("#error-msg").text("服务器异常，修改失败！").css("color", "red");
                     },
                     complete: function () {
                         $("#btn-change-info").removeClass("disabled").val("修改");
                         $(".loading").hide();
                     }
                 });
-            })
-        })
+            });
+        });
     </script>
 </head>
 <body>
-    <!--头部-->
     <div class="header"></div>
-    <!--中间导航条-->
     <div class="middleNavigation"></div>
 
     <div class="container">
         <div class="col-md-2">
-            <!--左侧导航-->
             <div class="panel-group" id="accordion">
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -171,13 +173,18 @@
                     <li><a href="address.html">收货管理</a></li>
                 </ul>
                 <div class="panel-body">
-                    <!--修改资料表单-->
                     <form id="form-change-info" class="form-horizontal" role="form">
                         <div class="form-group">
                             <label class="col-md-2 control-label">用户名：</label>
                             <div class="col-md-8">
                                 <input id="username" name="username" type="text" class="form-control" placeholder="用户名" readonly>
                                 <div class="form-tip">用户名不可修改</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">昵称：</label>
+                            <div class="col-md-8">
+                                <input id="nickname" name="nickname" type="text" class="form-control" placeholder="请输入昵称（2-10个字符）">
                             </div>
                         </div>
                         <div class="form-group">
@@ -190,6 +197,12 @@
                             <label class="col-md-2 control-label">电子邮箱：</label>
                             <div class="col-md-8">
                                 <input id="email" name="email" type="email" class="form-control" placeholder="请输入电子邮箱">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">生日：</label>
+                            <div class="col-md-8">
+                                <input id="birthday" name="birthday" type="date" class="form-control">
                             </div>
                         </div>
                         <div id="sex" class="form-group">
@@ -220,7 +233,6 @@
     </div>
 
     <div class="clearfix"></div>
-    <!--页脚-->
     <div class="footer"></div>
 </body>
 </html>

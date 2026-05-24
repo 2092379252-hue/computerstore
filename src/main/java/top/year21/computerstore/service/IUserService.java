@@ -3,6 +3,7 @@ package top.year21.computerstore.service;
 import top.year21.computerstore.entity.User;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 
 /**
  * @author hcxs1986
@@ -22,7 +23,7 @@ public interface IUserService {
     void userResetPwd(String oldPwd,String newPwd,HttpSession session);
 
     //处理用户修改个人资料
-    void userUpdateInfo(String phone,String email,Integer gender,String username,Integer uid);
+    void userUpdateInfo(String nickname, LocalDate birthday, String phone, String email, Integer gender, String username, Integer uid);
 
     //根据id查询用户信息
     User queryUserByUid(Integer uid);

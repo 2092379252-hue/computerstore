@@ -9,6 +9,7 @@ import top.year21.computerstore.entity.User;
 import top.year21.computerstore.service.IUserService;
 import top.year21.computerstore.utils.JsonResult;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 
 
 /**
@@ -62,6 +63,8 @@ public class UserController extends BaseController{
         newUser.setGender(loginUser.getGender());
         newUser.setPhone(loginUser.getPhone());
         newUser.setEmail(loginUser.getEmail());
+        newUser.setNickname(loginUser.getNickname());
+        newUser.setBirthday(loginUser.getBirthday());
         newUser.setAvatar(loginUser.getAvatar());
 
         return new JsonResult<>(OK,newUser);
@@ -92,6 +95,8 @@ public class UserController extends BaseController{
         newUser.setGender(user.getGender());
         newUser.setPhone(user.getPhone());
         newUser.setEmail(user.getEmail());
+        newUser.setNickname(user.getNickname());
+        newUser.setBirthday(user.getBirthday());
         newUser.setAvatar(user.getAvatar());
 
         return new JsonResult<>(OK,newUser);
@@ -100,13 +105,13 @@ public class UserController extends BaseController{
 
     //用户个人信息更新
     @PostMapping("/updateInfo")
-    public JsonResult<User> userInfoUpdate(String phone,String email,Integer gender,HttpSession session){
+    public JsonResult<User> userInfoUpdate(String nickname, LocalDate birthday, String phone, String email, Integer gender, HttpSession session){
         //从session中取出用户名和uid
         String username = getUsernameFromSession(session);
         Integer uid = getUserIdFromSession(session);
 
         //更新数据
-        userService.userUpdateInfo(phone, email, gender, username, uid);
+        userService.userUpdateInfo(nickname, birthday, phone, email, gender, username, uid);
 
         User user = userService.queryUserByUid(uid);
 
@@ -117,6 +122,8 @@ public class UserController extends BaseController{
         newUser.setGender(user.getGender());
         newUser.setPhone(user.getPhone());
         newUser.setEmail(user.getEmail());
+        newUser.setNickname(user.getNickname());
+        newUser.setBirthday(user.getBirthday());
         newUser.setAvatar(user.getAvatar());
 
         return new JsonResult<>(OK,newUser);

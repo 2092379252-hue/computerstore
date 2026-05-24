@@ -214,6 +214,8 @@ CREATE TABLE `t_user` (
   `username` varchar(20) NOT NULL COMMENT '用户名',
   `password` char(32) NOT NULL COMMENT '密码',
   `salt` char(36) DEFAULT NULL COMMENT '盐值',
+  `nickname` varchar(32) DEFAULT NULL COMMENT '昵称',
+  `birthday` date DEFAULT NULL COMMENT '生日',
   `phone` varchar(20) DEFAULT NULL COMMENT '电话号码',
   `email` varchar(30) DEFAULT NULL COMMENT '电子邮箱',
   `gender` int DEFAULT NULL COMMENT '性别:0-女，1-男',

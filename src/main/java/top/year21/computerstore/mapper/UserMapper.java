@@ -2,6 +2,7 @@ package top.year21.computerstore.mapper;
 
 import org.apache.ibatis.annotations.Param;
 import top.year21.computerstore.entity.User;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -62,7 +63,9 @@ public interface UserMapper {
      * @param uid 用户id
      * @return int
      **/
-    int UpdateUserInfo(String phone,
+    int UpdateUserInfo(String nickname,
+                       LocalDate birthday,
+                       String phone,
                        String email,
                        Integer gender,
                        String modifiedUser,
