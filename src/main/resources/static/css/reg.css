@@ -1,12 +1,321 @@
-/*注册页半透明框的样式*/
-.regDiv{
-	height: 280px;
-	width: 500px;
-	background-color: rgba(255,255,255,0.85);
-	float: right;
-	margin: 130px 60px 0 0;
-	border-radius: 10px;
-	color: #666666;
-	padding: 8px;
+/* 全局样式重置与基础设置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
+body {
+    background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    min-height: 100vh; /* 确保body高度足够 */
+    overflow-x: hidden; /* 防止移动端横向滚动 */
+}
+
+/* 注册容器 - 居中布局优化 */
+.reg-container {
+    width: 100vw;
+    min-height: 100vh; /* 替换height为min-height，适配内容溢出 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* 注册面板 - 视觉优化 */
+.reg-panel {
+    width: 100%;
+    max-width: 440px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    padding: 50px 40px;
+    position: relative;
+    overflow: hidden; /* 防止内部元素溢出 */
+}
+
+/* 面板头部 */
+.panel-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.panel-header h2 {
+    font-size: 28px;
+    color: #1f2937;
+    margin-bottom: 6px;
+    font-weight: 600; /* 增强标题字体权重 */
+}
+
+.panel-header p {
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.5; /* 优化行高 */
+}
+
+/* 表单组样式 */
+.form-group {
+    margin-bottom: 22px;
+    position: relative;
+}
+
+.form-group input {
+    width: 100%;
+    height: 48px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0 18px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease; /* 优化过渡效果 */
+    font-family: inherit; /* 继承字体 */
+}
+
+/* 输入框聚焦状态 */
+.form-group input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    background-color: #f9fafe; /* 聚焦时轻微背景色变化 */
+}
+
+/* 输入框禁用状态 */
+.form-group input:disabled {
+    background-color: #f9fafb;
+    color: #9ca3af;
+    cursor: not-allowed;
+    border-color: #f3f4f6;
+}
+
+/* 错误状态样式 */
+.form-group input.error {
+    border-color: #ef4444;
+}
+
+.form-group input.error:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* 错误提示 */
+.error-tip {
+    display: none;
+    font-size: 12px;
+    color: #ef4444;
+    margin-top: 6px;
+    padding-left: 18px;
+    line-height: 1.4;
+}
+
+/* 错误提示显示状态 */
+.error-tip.show {
+    display: block;
+}
+
+/* 密码强度样式 */
+.password-strength {
+    margin-top: 8px;
+    padding-left: 18px;
+}
+
+.strength-bar {
+    height: 6px;
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.3s ease;
+    margin-bottom: 4px;
+}
+
+.strength-bar.weak {
+    background-color: #ef4444;
+    width: 33%; /* 弱密码占1/3宽度 */
+}
+
+.strength-bar.medium {
+    background-color: #f59e0b;
+    width: 66%; /* 中密码占2/3宽度 */
+}
+
+.strength-bar.strong {
+    background-color: #10b981;
+    width: 100%; /* 强密码占满宽度 */
+}
+
+.strength-text {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* 提交按钮 */
+.btn-submit {
+    width: 100%;
+    height: 48px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    margin-bottom: 12px;
+    font-family: inherit;
+    display: flex; /* 方便加载图标居中 */
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-submit:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px); /* 轻微上浮效果 */
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.btn-submit:active {
+    transform: translateY(0); /* 点击时恢复 */
+}
+
+/* 加载状态 */
+.btn-submit.loading {
+    background: #93c5fd;
+    cursor: not-allowed;
+    transform: none; /* 加载时取消上浮 */
+    box-shadow: none;
+}
+
+.btn-loading {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: loading 1s linear infinite;
+    margin-right: 8px;
+}
+
+/* 加载动画 */
+@keyframes loading {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.btn-submit.loading .btn-loading {
+    display: inline-block;
+}
+
+/* 重置按钮 */
+.btn-reset {
+    width: 100%;
+    height: 48px;
+    background: #f3f4f6;
+    color: #4b5563;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.btn-reset:hover {
+    background: #e5e7eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.btn-reset:active {
+    transform: translateY(0);
+}
+
+/* 链接组 */
+.link-group {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.link-group a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.link-group a:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+/* 适配移动端 */
+@media (max-width: 480px) {
+    .reg-container {
+        padding: 10px; /* 减少移动端容器内边距 */
+    }
+    .reg-panel {
+        padding: 40px 20px;
+        border-radius: 16px; /* 移动端圆角稍小 */
+    }
+    .panel-header h2 {
+        font-size: 24px;
+    }
+    .form-group {
+        margin-bottom: 20px; /* 移动端表单间距稍小 */
+    }
+    .form-group input {
+        height: 46px; /* 移动端输入框高度稍小 */
+    }
+    .btn-submit, .btn-reset {
+        height: 46px; /* 移动端按钮高度适配 */
+        font-size: 15px;
+    }
+}
+
+/* 适配小屏手机 */
+@media (max-width: 375px) {
+    .reg-panel {
+        padding: 30px 15px;
+    }
+    .panel-header {
+        margin-bottom: 30px;
+    }
+}
+
+/* 深色模式适配（可选） */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    }
+    .reg-panel {
+        background: #334155;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+    .panel-header h2 {
+        color: #f8fafc;
+    }
+    .panel-header p, .strength-text {
+        color: #94a3b8;
+    }
+    .form-group input {
+        background: #475569;
+        border-color: #64748b;
+        color: #f8fafc;
+    }
+    .form-group input:focus {
+        background: #334155;
+        border-color: #3b82f6;
+    }
+    .btn-reset {
+        background: #475569;
+        color: #e2e8f0;
+    }
+    .btn-reset:hover {
+        background: #5865f2;
+    }
+    .link-group {
+        color: #94a3b8;
+    }
+}

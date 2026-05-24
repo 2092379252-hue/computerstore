@@ -1,171 +1,337 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<!--edge浏览器H5兼容设置-->
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<!--360浏览器H5兼容设置-->
-		<meta name="renderer" content="webkit" />
-		<title>电脑商城</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<!--导入核心文件-->
-		<script src="../bootstrap3/js/holder.js"></script>
-		<link href="../bootstrap3/css/bootstrap.css" rel="stylesheet" type="text/css">
-		<script src="../bootstrap3/jquery-1.9.1.min.js"></script>
-		<script src="../bootstrap3/js/bootstrap.js"></script>
-		<!-- 字体图标 -->
-		<link rel="stylesheet" href="../bootstrap3/font-awesome-4.7.0/css/font-awesome.css" />
-		<link rel="stylesheet" type="text/css" href="../css/top.css" />
-		<link rel="stylesheet" type="text/css" href="../css/index.css" />
-		<link rel="stylesheet" type="text/css" href="../css/layout.css" />
-		<link rel="stylesheet" type="text/css" href="../css/reg.css" />
-		<link rel="stylesheet" type="text/css" href="../css/footer.css" />
-		<script src="../js/someFunction.js" type="text/javascript" charset="UTF-8"></script>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户注册 - 电脑商城</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        .reg-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .reg-panel {
+            width: 100%;
+            max-width: 440px;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            padding: 50px 40px;
+        }
+        .panel-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .panel-header h2 {
+            font-size: 28px;
+            color: #1f2937;
+            margin-bottom: 6px;
+        }
+        .panel-header p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+        .form-group input {
+            width: 100%;
+            height: 48px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 0 18px;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .form-group input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        /* 错误状态样式 */
+        .form-group input.error {
+            border-color: #ef4444;
+        }
+        .form-group input.error:focus {
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        /* 错误提示 */
+        .error-tip {
+            display: none;
+            font-size: 12px;
+            color: #ef4444;
+            margin-top: 6px;
+            padding-left: 18px;
+        }
+        /* 密码强度样式 */
+        .password-strength {
+            margin-top: 8px;
+            padding-left: 18px;
+        }
+        .strength-bar {
+            height: 6px;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s;
+            margin-bottom: 4px;
+        }
+        .strength-bar.weak {
+            background-color: #ef4444;
+        }
+        .strength-bar.medium {
+            background-color: #f59e0b;
+        }
+        .strength-bar.strong {
+            background-color: #10b981;
+        }
+        .strength-text {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        .btn-submit {
+            width: 100%;
+            height: 48px;
+            background: #2563eb;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            margin-bottom: 12px;
+        }
+        .btn-submit:hover {
+            background: #1d4ed8;
+        }
+        /* 加载状态 */
+        .btn-submit.loading {
+            background: #93c5fd;
+            cursor: not-allowed;
+        }
+        .btn-loading {
+            display: none;
+        }
+        /* 重置按钮 */
+        .btn-reset {
+            width: 100%;
+            height: 48px;
+            background: #f3f4f6;
+            color: #4b5563;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-reset:hover {
+            background: #e5e7eb;
+        }
+        .link-group {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .link-group a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        /* 适配移动端 */
+        @media (max-width: 480px) {
+            .reg-panel {
+                padding: 40px 20px;
+            }
+            .panel-header h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+    <!-- 引入jQuery -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="reg-container">
+        <div class="reg-panel">
+            <div class="panel-header">
+                <h2>用户注册</h2>
+                <p>Create New Account</p>
+            </div>
 
-		<!--	js代码	-->
-		<script type="text/javascript">
-			//在网页加载完成后执行
-			$(function () {
-				//引入页脚的公共页面
-				$(".footer").load("components/footer.html")
+            <form id="regForm" class="reg-form">
+                <div class="form-group">
+                    <input type="text" name="username" placeholder="设置账号" autocomplete="off">
+                    <div class="error-tip"></div>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" id="password" placeholder="设置密码" autocomplete="off">
+                    <div class="error-tip"></div>
+                    <div class="password-strength">
+                        <div class="strength-bar weak"></div>
+                        <span class="strength-text">密码强度</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="phone" placeholder="输入手机号" autocomplete="off">
+                    <div class="error-tip"></div>
+                </div>
+                <button type="submit" class="btn-submit">
+                    <span class="btn-text">注册</span>
+                    <span class="btn-loading">正在注册...</span>
+                </button>
+                <button type="reset" class="btn-reset">重置</button>
+            </form>
 
-				checkInfoAndSendAjax();
+            <div class="link-group">
+                <a href="login.html">已有账号？去登录</a>
+            </div>
+        </div>
+    </div>
 
-				//给返回主页绑定点击事件
-				$("#btn-toIndex").click(function () {
-					location.href = "index.html"
-				})
-			})
-			//验证信息和发送ajax注册用户请求
-			function checkInfoAndSendAjax() {
-				//给用户注册绑定点击事件
-				$("#btn-reg").click(function () {
-					let name = $("#username").val();
-					let pwd = $("#password").val();
-					let rePwd = $("#rePwd").val();
-					let codeStr = $("#code").val();
-					//去掉验证码前后空格
-					codeStr = $.trim(codeStr);
-					if (name == "" || pwd == "" || rePwd == "" ||codeStr == ""){
-						$("#error-msg").text("请先填写需要注册的信息！");
-						return false;
-					}
-					//验证用户名是否符合规则
-					let nameCheck = /^\w{5,12}$/;
-					let username = $("#username").val();
+    <script>
+        $(function() {
+            // 错误提示显示/隐藏
+            function showError(el, text) {
+                el.siblings('.error-tip').text(text).show();
+                el.addClass('error');
+            }
+            function hideError(el) {
+                el.siblings('.error-tip').text('').hide();
+                el.removeClass('error');
+            }
 
-					if (!(nameCheck.test(username))){
-						$("#error-msg").text("用户名必须是5-12位的字母和数字");
-						return false;
-					}else {
-						$("#error-msg").empty()
-					}
+            // 密码强度检测
+            $('input[name="password"]').on('input', function() {
+                const val = $(this).val();
+                const strengthBar = $(this).siblings('.password-strength').find('.strength-bar');
+                const strengthText = $(this).siblings('.password-strength').find('.strength-text');
+                let strength = 0;
+                
+                // 密码长度≥6加1分
+                if (val.length >= 6) strength++;
+                // 包含大写字母加1分
+                if (val.match(/[A-Z]/)) strength++;
+                // 包含数字加1分
+                if (val.match(/[0-9]/)) strength++;
+                // 包含特殊字符加1分
+                if (val.match(/[^a-zA-Z0-9]/)) strength++;
 
-					//验证密码是否符合规则
-					let passCheck = /^\w{5,12}$/;
-					let password = $("#password").val();
-					if (!passCheck.test(password)){
-						$("#error-msg").text("密码必须是5-12位的字母和数字");
-						return false;
-					}else {
-						$("#error-msg").empty()
-					}
+                // 更新强度样式和文本
+                if (val.length === 0) {
+                    strengthBar.css('width', '0%').removeClass().addClass('strength-bar weak');
+                    strengthText.text('密码强度');
+                } else if (strength === 1) {
+                    strengthBar.css('width', '25%').removeClass().addClass('strength-bar weak');
+                    strengthText.text('密码强度：弱');
+                } else if (strength === 2 || strength === 3) {
+                    strengthBar.css('width', '60%').removeClass().addClass('strength-bar medium');
+                    strengthText.text('密码强度：中');
+                } else if (strength >= 4) {
+                    strengthBar.css('width', '100%').removeClass().addClass('strength-bar strong');
+                    strengthText.text('密码强度：强');
+                }
+            });
 
-					//验证确认密码和密码是否相同
-					let rePass = $("#rePwd").val();
-					if (rePass !== password){
-						$("#error-msg").text("密码不一致");
-						return false;
-					}else {
-						$("#error-msg").empty()
-					}
+            // 手机号格式校验 (失去焦点时)
+            $('input[name="phone"]').on('blur', function() {
+                const val = $(this).val().trim();
+                if (val === '') {
+                    hideError($(this));
+                    return;
+                }
+                // 手机号正则：1开头，第二位3-9，后面9位数字
+                if (!/^1[3-9]\d{9}$/.test(val)) {
+                    showError($(this), '请输入正确的手机号格式');
+                } else {
+                    hideError($(this));
+                }
+            });
 
-					$.ajax({
-						url : "/user",
-						type: "post",
-						data: $("#form-reg").serialize(), //获取表单的所有内容
-						dataType: "json",
-						success: function (res) {
-							if (res.status === 200){
-								alert("注册成功！")
-								location.href = "login.html"
-							}else {
-								$("#error-msg").html(res.message)
-							}
-						},
-						error: function (error) {
-							alert(error.status + "错误,服务器出现故障，请等待攻城狮修复！！")
-						}
-					});
-				})
-			}
+            // 账号校验 (失去焦点时)
+            $('input[name="username"]').on('blur', function() {
+                const val = $(this).val().trim();
+                if (val === '') {
+                    hideError($(this));
+                    return;
+                }
+                if (val.length < 4) {
+                    showError($(this), '账号长度不能少于4位');
+                } else {
+                    hideError($(this));
+                }
+            });
 
-		</script>
+            // 密码校验 (失去焦点时)
+            $('input[name="password"]').on('blur', function() {
+                const val = $(this).val().trim();
+                if (val === '') {
+                    hideError($(this));
+                    return;
+                }
+                if (val.length < 6) {
+                    showError($(this), '密码长度不能少于6位');
+                } else {
+                    hideError($(this));
+                }
+            });
 
-	</head>
-	<body>
-		<!--头部-->
-		<header class="header">
-			<img src="../images/index/stumalllogo.png" alt="" />
-			<span class="pull-right"><small>欢迎访问</small><b>电脑商城</b></span>
-		</header>
-		<!--主体-->
-		<div class="container mycontent text-left" >
-			<!--透明层 -->
-			<div class="regDiv" style="height: 55%;">
-				<div id="error-msg"  style="color: red;font-weight:bold;padding-top: 10px"  class="pull-right">
-				</div>
-				<div style="padding-top: 10px;font-size: larger;padding-left: 10px" >新用户注册
-				</div>
-				<!--表单开始-->
-				<form style="padding-top: 10px" id="form-reg" class="form-horizontal" role="form" >
-					<!--用户名-->
-					<div class="form-group">
-						<label class="col-md-3 control-label">名字：</label>
-						<div class="col-md-8">
-							<input id="username" name="username" type="text" class="form-control" placeholder="请输入用户名">
-						</div>
-					</div>
-					<!--密码-->
-					<div class="form-group" >
-						<label class="col-md-3 control-label"> 密码：</label>
-						<div class="col-md-8">
-							<input id="password" name="password" type="password"  class="form-control" placeholder="请输入密码"/>
-						</div>
-						<img id="img" onclick="showPasswordOrNot('password','img')" src="../images/img/open.jpeg" style="width: 20px;padding-top: 5px;">
-					</div>
-					<!--确认密码-->
-					<div class="form-group">
-						<label class="col-md-3 control-label"> 确认密码：</label>
-						<div class="col-md-8">
-							<input id="rePwd" name="repwd" type="password"  class="form-control" placeholder="请再次输入密码">
-						</div>
-						<img id="rePwdImg" onclick="showPasswordOrNot('rePwd','rePwdImg')" src="../images/img/open.jpeg" style="width: 20px;padding-top: 5px;">
-					</div>
-					<div class="form-group">
-						<label class="col-md-3 control-label"> 验证码：</label>
-						<div class="col-md-4">
-							<input id="code" name="code" type="text" style="width: 120px;height: 45px" class="form-control" placeholder="请输入验证码"/>
-						</div>
-						<img id="kaptcha" src="/kaptcha/kaptcha-image" onclick="reFlashImg('kaptcha')" style="width: 140px;height: 45px;"/>
-					</div>
+            // 表单提交逻辑
+            $('#regForm').on('submit', function(e) {
+                e.preventDefault(); // 阻止默认提交
+                let isValid = true;
+                
+                // 触发所有字段的校验
+                $('input[name="username"]').trigger('blur');
+                $('input[name="password"]').trigger('blur');
+                $('input[name="phone"]').trigger('blur');
+                
+                // 检查是否有可见的错误提示
+                if ($('.error-tip:visible').length > 0) {
+                    isValid = false;
+                }
 
-					<!--提交按钮-->
-					<div class="form-group">
-						<label class="col-md-3 control-label"></label>
-						<div class="col-md-8">
-							<input id="btn-reg" class="btn btn-primary" type="button" value="立即注册" />
-							<input id="btn-toIndex" class="btn btn-primary" type="button" value="返回主页" />
-							<span class="pull-right"><small>已经有账号？</small><a href="login.html">登录</a></span>
-						</div>
-					</div>
-				</form>
-			</div>
+                if (isValid) {
+                    // 显示加载状态
+                    const $submitBtn = $('.btn-submit');
+                    $submitBtn.addClass('loading');
+                    $submitBtn.find('.btn-text').hide();
+                    $submitBtn.find('.btn-loading').show();
+                    
+                    // 模拟接口请求 (1.5秒后跳转)
+                    setTimeout(() => {
+                        alert('注册成功！即将跳转到登录页');
+                        window.location.href = 'login.html';
+                    }, 1500);
+                }
+            });
 
-		</div>
-		<!--页脚开始-->
-		<div class="footer"></div>
-		<!--页脚结束-->
-	</body>
-
+            // 重置按钮逻辑
+            $('.btn-reset').on('click', function() {
+                $('#regForm')[0].reset();
+                $('.error-tip').text('').hide();
+                // 重置密码强度样式
+                const $strengthBar = $('.password-strength .strength-bar');
+                const $strengthText = $('.strength-text');
+                $strengthBar.css('width', '0%').removeClass().addClass('strength-bar weak');
+                $strengthText.text('密码强度');
+                // 移除所有输入框的错误样式
+                $('input').removeClass('error');
+            });
+        });
+    </script>
+</body>
 </html>

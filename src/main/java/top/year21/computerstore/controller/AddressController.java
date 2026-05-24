@@ -70,6 +70,7 @@ public class AddressController extends BaseController{
             address.setCreatedTime(null);
             address.setCreatedUser(null);
         }
+
         //返回数据
         return new JsonResult<>(OK,list);
     }

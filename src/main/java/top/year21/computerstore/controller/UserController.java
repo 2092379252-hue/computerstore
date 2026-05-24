@@ -41,20 +41,21 @@ public class UserController extends BaseController{
 
     //用户登录
     @GetMapping
-    public JsonResult<User> userLogin(User user, HttpSession session,String code){
-        //将存储在session的kaptcha所生成的验证码取出
+    public JsonResult<User> userLogin(User user, HttpSession session, String code, String kaptchaCode){
         String validCode = (String) session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
-        //判断验证码是否一致
-        if (!validCode.equals(code)){
+        String inputCode = (kaptchaCode != null && !kaptchaCode.isBlank()) ? kaptchaCode : code;
+
+        if (validCode == null || inputCode == null || !validCode.equalsIgnoreCase(inputCode)){
             throw new ValidCodeNotMatchException("验证码错误,请重试！");
         }
-        //执行登录操作
+
+        session.removeAttribute(Constants.KAPTCHA_SESSION_KEY);
+
         User loginUser = userService.userLogin(user);
-        //分别将用户的session保存到服务端
+
         session.setAttribute("uid",loginUser.getUid());
         session.setAttribute("username",loginUser.getUsername());
-        //优化一下传回前端的user数据，有些字段是不需要的。
-        //只将用户名和uid进行回传
+
         User newUser = new User();
         newUser.setUsername(loginUser.getUsername());
         newUser.setUid(loginUser.getUid());
